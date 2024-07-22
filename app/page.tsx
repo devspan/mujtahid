@@ -2,7 +2,7 @@
 
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Moon, Sun } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,15 +26,7 @@ export default function Home() {
 
   const itemsPerPage = 5;
 
-  useEffect(() => {
-    filterHadiths();
-  }, [searchTerm, sourceFilter, narratorFilter, gradingFilter]);
-
-  useEffect(() => {
-    document.body.classList.toggle('dark', darkMode);
-  }, [darkMode]);
-
-  const filterHadiths = () => {
+  const filterHadiths = useCallback(() => {
     let filtered = sampleHadith.filter(hadith =>
       hadith.text.english.toLowerCase().includes(searchTerm.toLowerCase()) ||
       hadith.text.arabic.includes(searchTerm)
@@ -46,7 +38,15 @@ export default function Home() {
 
     setFilteredHadiths(filtered);
     setCurrentPage(1);
-  };
+  }, [searchTerm, sourceFilter, narratorFilter, gradingFilter]);
+
+  useEffect(() => {
+    filterHadiths();
+  }, [filterHadiths]);
+
+  useEffect(() => {
+    document.body.classList.toggle('dark', darkMode);
+  }, [darkMode]);
 
   const toggleBookmark = (id: string) => {
     setBookmarks(prev => 
